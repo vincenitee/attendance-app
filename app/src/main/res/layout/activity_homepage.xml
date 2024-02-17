@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="13dp"
+    android:paddingRight="13dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".Homepage"
+    android:background="@drawable/login_background1">
+
+<androidx.cardview.widget.CardView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"
+    android:layout_marginRight="10dp"
+    app:cardBackgroundColor="@color/newGray"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="20dp">
+    <com.budiyev.android.codescanner.CodeScannerView
+        android:id="@+id/scanner_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="230dp"
+        app:frameCornersRadius="30dp"
+        app:autoFocusButtonColor="@color/pink"
+        app:autoFocusButtonVisible="true"
+        app:flashButtonColor="@color/pink"
+        app:flashButtonVisible="true"
+        app:frameColor="@android:color/white"
+        app:frameCornersSize="50dp"
+        app:maskColor="@color/newGray"
+        />
+    <TextView
+        android:id="@+id/scanIdNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="110dp"
+        android:text="Scan ID Barcode or ID QR code"
+        android:textSize="18dp"
+        android:textColor="@color/pink"
+        android:textStyle="bold"
+        />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center|left"
+            android:layout_marginTop="160dp"
+            android:layout_marginStart="30dp">
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Permission Typeshit"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center|left"
+        android:layout_marginTop="205dp"
+        android:layout_marginStart="30dp">
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Permission Typeshit"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="260dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btnTimeIn"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:text="Time In"
+            android:backgroundTint="@color/bastaGray"
+            android:textColor="@color/white"
+            android:onClick="timeIn"/>
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btnTimeOut"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:text="Time Out"
+            android:backgroundTint="@color/bastaGray"
+            android:textColor="@color/white"
+            android:onClick="timeOut"
+            />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+
+</RelativeLayout>

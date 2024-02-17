@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "872698776256",
+    "project_id": "kotlinfirestoredb",
+    "storage_bucket": "kotlinfirestoredb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:872698776256:android:1830d0633de17d9ef73b25",
+        "android_client_info": {
+          "package_name": "com.example.attendance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBzWiK1mCZ9qlm3QBiZKF1WvgTZW8tLQs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:872698776256:android:f4deac30688794dcf73b25",
+        "android_client_info": {
+          "package_name": "com.example.crudfirestoredb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBzWiK1mCZ9qlm3QBiZKF1WvgTZW8tLQs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
