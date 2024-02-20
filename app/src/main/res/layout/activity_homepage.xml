@@ -35,17 +35,17 @@
             app:frameCornersSize="50dp"
             app:maskColor="@color/newGray"
             />
+
         <TextView
             android:id="@+id/scanName"
-            android:layout_width="wrap_content"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="95dp"
-            android:text="Name"
-            android:textSize="18dp"
+            android:text="Name: "
             android:textColor="@color/pink"
-            android:textStyle="bold"
-            />
+            android:textSize="18dp"
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/scanIdNum"
             android:layout_width="wrap_content"
@@ -57,17 +57,17 @@
             android:textColor="@color/pink"
             android:textStyle="bold"
             />
+
         <TextView
             android:id="@+id/scanSection"
-            android:layout_width="wrap_content"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="125dp"
-            android:text="Section"
-            android:textSize="18dp"
+            android:text="Section:"
             android:textColor="@color/pink"
-            android:textStyle="bold"
-            />
+            android:textSize="18dp"
+            android:textStyle="bold" />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

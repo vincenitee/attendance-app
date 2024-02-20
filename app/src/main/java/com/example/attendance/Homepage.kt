@@ -14,17 +14,13 @@ import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.example.attendance.databinding.ActivityHomepageBinding
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.zxing.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.time.Instant
 
 
 class Homepage : AppCompatActivity() {
@@ -33,10 +29,11 @@ class Homepage : AppCompatActivity() {
     private lateinit var homePageBinding: ActivityHomepageBinding
     private val db = FirebaseFirestore.getInstance()
     private val studentCollectionRef = db.collection("student")
-    private val eventCollectionRef = db.collection("event")
+    private val eventCollectionRllef = db.collection("event")
 
     private val codeScannerView by lazy { homePageBinding.scannerView }
-    private val resultTextView by lazy { homePageBinding.scanIdNum }
+    private val resultName by lazy { homePageBinding.scanName }
+    private val resultSection by lazy { homePageBinding.scanSection }
     private val btnTimeOut by lazy { homePageBinding.btnTimeOut}
     private val btnTimeIn by lazy { homePageBinding.btnTimeIn }
 
@@ -66,7 +63,7 @@ class Homepage : AppCompatActivity() {
             autoFocusMode = AutoFocusMode.SAFE
             scanMode = ScanMode.CONTINUOUS
             isAutoFocusEnabled = true
-            isFlashEnabled = true
+            isFlashEnabled = false
 
             // decode success
             decodeCallback  = DecodeCallback {
@@ -99,9 +96,14 @@ class Homepage : AppCompatActivity() {
                 studentCollectionRef.document(idNumber).get().await()
             }
 
-            val data = documentSnapshot.data?.get("first_name")
+            val firstName = documentSnapshot.getString("first_name") ?: ""
+            val lastName = documentSnapshot.getString("last_name") ?: ""
+            val year = documentSnapshot.getString("year") ?: ""
+            val section = documentSnapshot.getString("section") ?: ""
+
             withContext(Dispatchers.Main) {
-                resultTextView.text = data?.toString() ?: "Student Not Found"
+                resultName.text = String.format("Name: %s %s", firstName, lastName)
+                resultSection.text = String.format("Year & Section: %s%s", year, section)
             }
         } catch (e: Exception) {
             Log.d("MainActivity", e.message ?: "")
@@ -170,7 +172,7 @@ class Homepage : AppCompatActivity() {
     }
 
     fun timeIn(view: View) {
-
+        
     }
     fun timeOut(view: View) {
         //codes here
