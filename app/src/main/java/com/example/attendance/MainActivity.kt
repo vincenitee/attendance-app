@@ -32,41 +32,41 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         btnLogin.setOnClickListener {
-            showMessageAndNavigate("Authentication Success", Homepage::class.java)
-//            val idnum = idNumber.text.toString()
-//            val pass = password.text.toString()
-//
-//            when{
-//                idnum.isEmpty() || pass.isEmpty() -> showMessage("ID Number and Password should not be empty")
-//                idnum.length != 8 || !idnum.isDigitsOnly() -> showMessage("Invalid ID Number")
-//                else -> signIn(idnum, pass)
-//            }
+//            showMessageAndNavigate("Authentication Success", Homepage::class.java)
+            val idNumberValue = idNumber.text.toString()
+            val pass = password.text.toString()
+
+            when{
+                idNumberValue.isEmpty() || pass.isEmpty() -> showMessage("ID Number and Password should not be empty")
+                idNumberValue.length != 8 || !idNumberValue.isDigitsOnly() -> showMessage("Invalid ID Number")
+                else -> signIn(idNumberValue, pass)
+            }
         }
     }
 
     private fun signIn(idNumber: String, enteredPassword: String) = CoroutineScope(Dispatchers.IO).launch {
         try {
             val documentSnapshot = studentCollectionRef.document(idNumber).get().await()
-            val userData = UserData(documentSnapshot.getString("role"), documentSnapshot.getString("password"))
+            val userRoleString = documentSnapshot.getString("role") ?: "STUDENT"
+            val userRole = UserRole.valueOf(userRoleString.uppercase())
+            val userData = UserData(userRole, documentSnapshot.getString("password") ?: "")
 
-            if (authenticateUser(userData, enteredPassword)) {
+            if(authenticateUser(userData, enteredPassword)){
                 withContext(Dispatchers.Main) {
                     showMessageAndNavigate("Authentication Success", Homepage::class.java)
                 }
-            } else {
-                withContext(Dispatchers.Main) {
+            } else{
+                withContext(Dispatchers.Main){
                     showMessage("Authentication Failed")
                 }
             }
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main){
-               showMessage(e.message?:"")
-            }
+        }catch (e: Exception){
+            showMessage(e.message)
         }
     }
 
     private fun authenticateUser(userData: UserData, enteredPassword: String): Boolean{
-        return userData.role == "officer" && userData.pass == enteredPassword
+        return userData.role == UserRole.OFFICER && userData.pass == enteredPassword
     }
 
     private inline fun <reified T : Activity> nextActivity(context: Context, clazz: Class<T>) {
@@ -74,8 +74,8 @@ class MainActivity : AppCompatActivity() {
         context.startActivity(intent)
     }
 
-    private fun showMessage(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+    private fun showMessage(message: String?) {
+        Snackbar.make(binding.root, message?:"", Snackbar.LENGTH_LONG).show()
     }
 
     private inline fun <reified T : Activity> showMessageAndNavigate(message: String, clazz: Class<T>) {

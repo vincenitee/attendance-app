@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.google.firebase.Timestamp
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.zxing.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -29,15 +31,16 @@ class Homepage : AppCompatActivity() {
     private lateinit var homePageBinding: ActivityHomepageBinding
     private val db = FirebaseFirestore.getInstance()
     private val studentCollectionRef = db.collection("student")
-    private val eventCollectionRllef = db.collection("event")
+    private val eventCollectionRef = db.collection("event")
 
     private val codeScannerView by lazy { homePageBinding.scannerView }
     private val resultName by lazy { homePageBinding.scanName }
     private val resultSection by lazy { homePageBinding.scanSection }
+    private val indicatorView by lazy { homePageBinding.scanIdNum }
     private val btnTimeOut by lazy { homePageBinding.btnTimeOut}
     private val btnTimeIn by lazy { homePageBinding.btnTimeIn }
 
-    private val CAMERA_REQUEST_CODE = 101
+    private val cameraRequestCode = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,8 +72,12 @@ class Homepage : AppCompatActivity() {
             decodeCallback  = DecodeCallback {
                 runOnUiThread{
                     val idNumber = extractIdNumber(it)
+                    indicatorView.text = idNumber
                     if(idNumber != null){
                         getStudentInfo(idNumber)
+                    }
+                    else{
+                        indicatorView.text = "Invalid ID Number"
                     }
                 }
             }
@@ -85,8 +92,18 @@ class Homepage : AppCompatActivity() {
     }
 
     // retrieves event information
-    private fun getEventInfo(eventID: String) = CoroutineScope(Dispatchers.IO).launch{
+    // to be fixed
+    private fun getEventInfo(eventID: String) = CoroutineScope(Dispatchers.IO).async {
+        try {
+            val documentSnapshot = withContext(Dispatchers.IO){
+                eventCollectionRef.document(eventID).get().await()
+            }
+            val timeInStart = documentSnapshot.getTimestamp("time_in_start")
+            indicatorView.text = timeInStart?.toDate().toString()
 
+        }catch (e:Exception){
+            showMessage(e.message)
+        }
     }
 
     // retrieves student info from database
@@ -102,12 +119,16 @@ class Homepage : AppCompatActivity() {
             val section = documentSnapshot.getString("section") ?: ""
 
             withContext(Dispatchers.Main) {
-                resultName.text = String.format("Name: %s %s", firstName, lastName)
-                resultSection.text = String.format("Year & Section: %s%s", year, section)
+                updateUI(firstName, lastName, year, section)
             }
         } catch (e: Exception) {
-            Log.d("MainActivity", e.message ?: "")
+            showMessage(e.message)
         }
+    }
+
+    private fun updateUI(firstName: String, lastName: String, year: String, section: String){
+        resultName.text = String.format("Name: %s %s", firstName, lastName)
+        resultSection.text = String.format("Section: %s%s", year, section)
     }
 
     // filters id number
@@ -127,7 +148,7 @@ class Homepage : AppCompatActivity() {
 
     private fun showMessage(message: String?) {
         Snackbar.make(homePageBinding.root,
-            message?:"", Snackbar.LENGTH_LONG).show()
+            message?:"Unknown Error Occurred", Snackbar.LENGTH_LONG).show()
     }
 
     override fun onResume(){
@@ -153,7 +174,7 @@ class Homepage : AppCompatActivity() {
     private fun makeRequest(){
         ActivityCompat.requestPermissions(this,
             arrayOf(android.Manifest.permission.CAMERA),
-            CAMERA_REQUEST_CODE)
+            cameraRequestCode)
     }
 
     override fun onRequestPermissionsResult(
@@ -163,7 +184,7 @@ class Homepage : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode){
-            CAMERA_REQUEST_CODE -> {
+            cameraRequestCode -> {
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED){
                     showMessage("CAMERA PERMISSION REQUIRED")
                 }
@@ -172,7 +193,8 @@ class Homepage : AppCompatActivity() {
     }
 
     fun timeIn(view: View) {
-        
+
+
     }
     fun timeOut(view: View) {
         //codes here
