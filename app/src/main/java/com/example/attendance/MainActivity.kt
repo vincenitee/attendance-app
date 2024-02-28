@@ -32,15 +32,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         btnLogin.setOnClickListener {
-//            showMessageAndNavigate("Authentication Success", Homepage::class.java)
-            val idNumberValue = idNumber.text.toString()
-            val pass = password.text.toString()
-
-            when{
-                idNumberValue.isEmpty() || pass.isEmpty() -> showMessage("ID Number and Password should not be empty")
-                idNumberValue.length != 8 || !idNumberValue.isDigitsOnly() -> showMessage("Invalid ID Number")
-                else -> signIn(idNumberValue, pass)
-            }
+           showMessageAndNavigate("Authentication Success", Homepage::class.java)
+//            val idNumberValue = idNumber.text.toString()
+//            val pass = password.text.toString()
+//
+//            when{
+//                idNumberValue.isEmpty() || pass.isEmpty() -> showMessage("ID Number and Password should not be empty")
+//                idNumberValue.length != 8 || !idNumberValue.isDigitsOnly() -> showMessage("Invalid ID Number")
+//                else -> signIn(idNumberValue, pass)
+//            }
         }
     }
 

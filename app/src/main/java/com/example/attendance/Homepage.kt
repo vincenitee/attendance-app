@@ -18,11 +18,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.zxing.Result
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.Date
 
 
 class Homepage : AppCompatActivity() {
@@ -37,8 +40,8 @@ class Homepage : AppCompatActivity() {
     private val resultName by lazy { homePageBinding.scanName }
     private val resultSection by lazy { homePageBinding.scanSection }
     private val indicatorView by lazy { homePageBinding.scanIdNum }
-    private val btnTimeOut by lazy { homePageBinding.btnTimeOut}
-    private val btnTimeIn by lazy { homePageBinding.btnTimeIn }
+    private val permission1 by lazy { homePageBinding.permission1CheckBox }
+    private val permission2 by lazy { homePageBinding.permission2Checkbox }
 
     private val cameraRequestCode = 101
 
@@ -81,7 +84,6 @@ class Homepage : AppCompatActivity() {
                     }
                 }
             }
-
             // camera initialization failure
             errorCallback = ErrorCallback {
                 runOnUiThread {
@@ -93,16 +95,20 @@ class Homepage : AppCompatActivity() {
 
     // retrieves event information
     // to be fixed
-    private fun getEventInfo(eventID: String) = CoroutineScope(Dispatchers.IO).async {
+    private fun getEventInfo(eventID: String): Deferred<TimeRange?> = CoroutineScope(Dispatchers.IO).async {
         try {
-            val documentSnapshot = withContext(Dispatchers.IO){
-                eventCollectionRef.document(eventID).get().await()
-            }
-            val timeInStart = documentSnapshot.getTimestamp("time_in_start")
-            indicatorView.text = timeInStart?.toDate().toString()
+            val documentSnapshot = eventCollectionRef.document(eventID).get().await()
 
-        }catch (e:Exception){
+            if (documentSnapshot.exists()) {
+                val timeRange = TimeRange(documentSnapshot.getTimestamp("time_in_start"),
+                    documentSnapshot.getTimestamp("time_in_end"))
+                timeRange
+            } else {
+                null
+            }
+        } catch (e: Exception) {
             showMessage(e.message)
+            null
         }
     }
 
@@ -147,6 +153,7 @@ class Homepage : AppCompatActivity() {
     }
 
     private fun showMessage(message: String?) {
+        Log.d("HomeActivity", message?:"")
         Snackbar.make(homePageBinding.root,
             message?:"Unknown Error Occurred", Snackbar.LENGTH_LONG).show()
     }
@@ -192,10 +199,27 @@ class Homepage : AppCompatActivity() {
         }
     }
 
-    fun timeIn(view: View) {
+    fun timeIn(view: View) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val timeRange = getEventInfo("ccs_week").await()
+            val timeInStart = timeRange?.timeStart?.toDate()
+            val timeInEnd = timeRange?.timeEnd?.toDate()
 
+            if(permission1.isChecked && permission2.isChecked){
+                withContext(Dispatchers.Main){
+                    showMessage("$timeInStart")
+                }
+            }
+
+        }catch (e: Exception){
+            showMessage(e.message)
+        }
+    }
+
+    private suspend fun recordAttendance(){
 
     }
+
     fun timeOut(view: View) {
         //codes here
     }
